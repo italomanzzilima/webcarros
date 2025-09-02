@@ -11,7 +11,8 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../contexts/auth/AuthContext";
 
 // zod schema for form validation
 const schema = z.object({
@@ -25,6 +26,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Register = () => {
+  const { handleInfoUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const {
@@ -49,7 +51,15 @@ const Register = () => {
         await updateProfile(user.user, {
           displayName: data.name,
         });
+
+        handleInfoUser({
+          name: data.name,
+          email: data.email,
+          uid: user.user.uid,
+        });
+
         console.log("cadastrado com sucesso");
+
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
@@ -100,7 +110,7 @@ const Register = () => {
           </div>
 
           <button
-            className="bg-zinc-900 text-white w-full rounded-md h-11 font-medium"
+            className="bg-zinc-900 text-white w-full rounded-md h-11 font-medium cursor-pointer"
             type="submit"
           >
             Acessar

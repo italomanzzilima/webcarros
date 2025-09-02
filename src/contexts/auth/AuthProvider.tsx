@@ -2,15 +2,9 @@ import { type ReactNode, useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../services/firebaseConnection";
-
+import { type UserProps } from "./AuthContext";
 interface AuthProviderProps {
   children: ReactNode;
-}
-
-interface UserProps {
-  uid: string;
-  name: string | null;
-  email: string | null;
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
@@ -37,11 +31,17 @@ function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);
 
+  function handleInfoUser({ name, email, uid }: UserProps) {
+    setUser({ name, email, uid });
+  }
+
   return (
     <AuthContext.Provider
       value={{
         signed: !!user,
         loadingAuth,
+        handleInfoUser,
+        user,
       }}
     >
       {children}
