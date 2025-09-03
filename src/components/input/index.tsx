@@ -25,6 +25,7 @@ const Input = ({
         type={type}
         placeholder={placeholder}
         {...register(name, rules)}
+        autoComplete="on"
       />
       {error && <p className="text-red-500">{error}</p>}
     </div>

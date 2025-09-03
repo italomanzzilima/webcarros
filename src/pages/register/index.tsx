@@ -13,6 +13,7 @@ import {
 } from "firebase/auth";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/auth/AuthContext";
+import Button from "../../components/Button";
 
 // zod schema for form validation
 const schema = z.object({
@@ -109,12 +110,7 @@ const Register = () => {
             />
           </div>
 
-          <button
-            className="bg-zinc-900 text-white w-full rounded-md h-11 font-medium cursor-pointer"
-            type="submit"
-          >
-            Acessar
-          </button>
+          <Button type="submit">Acessar</Button>
         </form>
         <Link to="/login" className="underline text-zinc-500">
           Já possui uma conta? faça o login!

@@ -8,6 +8,7 @@ import { z } from "zod";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../../services/firebaseConnection";
 import { useEffect } from "react";
+import Button from "../../components/Button";
 
 const schema = z.object({
   email: z
@@ -78,12 +79,7 @@ const Login = () => {
               register={register}
             />
           </div>
-          <button
-            className="bg-zinc-900 text-white w-full rounded-md h-11 font-medium"
-            type="submit"
-          >
-            Acessar
-          </button>
+          <Button type="submit">Acessar</Button>
         </form>
 
         <Link to="/register" className="underline text-zinc-500">

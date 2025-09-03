@@ -9,7 +9,7 @@ const Home = () => {
           type="text"
           placeholder="Digite o nome do carro"
         />
-        <button className="bg-red-500 h-9 px-8 rounded-lg text-white font-medium text-lg">
+        <button className="bg-red-500 h-9 px-8 rounded-lg text-white font-medium text-lg cursor-pointer">
           Buscar
         </button>
       </section>
