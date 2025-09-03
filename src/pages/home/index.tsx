@@ -1,6 +1,56 @@
+import { useState, useEffect } from "react";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
+import { db } from "../../services/firebaseConnection";
+
 import Container from "../../components/container";
+import { Link } from "react-router";
+
+interface CarProps {
+  id: string;
+  name: string;
+  year: string;
+  uid: string;
+  price: string | number;
+  city: string;
+  km: string;
+  images: CarImagesProps[];
+}
+
+interface CarImagesProps {
+  name: string;
+  uid: string;
+  url: string;
+}
 
 const Home = () => {
+  const [cars, setCars] = useState<CarProps[]>([]);
+
+  useEffect(() => {
+    function loadCars() {
+      const carsRef = collection(db, "cars");
+      const queryRef = query(carsRef, orderBy("created", "desc"));
+      getDocs(queryRef)
+        .then((snapshot) => {
+          const listCars = [] as CarProps[];
+          snapshot.forEach((doc) => {
+            listCars.push({
+              id: doc.id,
+              name: doc.data().name,
+              year: doc.data().year,
+              price: doc.data().price,
+              km: doc.data().km,
+              city: doc.data().city,
+              images: doc.data().images,
+              uid: doc.data().uid,
+            });
+          });
+          setCars(listCars);
+        })
+        .catch();
+    }
+    loadCars();
+  }, []);
+
   return (
     <Container>
       <section className="bg-white p-4 rounded-lg w-full max-w-3xl mx-auto flex justify-center items-center gap-2">
@@ -19,101 +69,40 @@ const Home = () => {
       </h1>
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <section className="w-full bg-white rounded-lg">
-          <img
-            className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-            src="https://www.webmotors.com.br/imagens/prod/348300/MERCEDESBENZ_GLE_53_AMG_3.0_I6_GASOLINA_4MATICPLUS_9GTRONIC_34830015405424367.webp"
-            alt="Carro"
-          />
+        {cars.length > 0 &&
+          cars.map((car) => (
+            <Link to={`/car/${car.id}`} key={car.id}>
+              <section className="w-full bg-white rounded-lg">
+                <img
+                  className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
+                  src={car.images[0].url}
+                  alt={car.name}
+                />
 
-          <p className="font-bold mt-1 mb-2 px-2">MERCEDESBENZ GLE 53</p>
+                <p className="font-bold mt-1 mb-2 px-2">{car.name}</p>
 
-          <div className="flex flex-col px-2">
-            <span className="text-zinc-500 mb-6">Ano 2025/2025 | 0KM </span>
-            <strong className="text-black font-medium text-xl">
-              R$ 889.900
-            </strong>
-          </div>
+                <div className="flex flex-col px-2">
+                  <span className="text-zinc-500 mb-6">
+                    Ano {car.year} | {car.km}KM{" "}
+                  </span>
+                  <strong className="text-black font-medium text-xl">
+                    R$
+                    {car.price.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </strong>
+                </div>
 
-          {/* Divisor */}
-          <div className="w-full h-px bg-slate-200 my-2"></div>
+                {/* Divisor */}
+                <div className="w-full h-px bg-slate-200 my-2"></div>
 
-          <div className="px-2 pb-2">
-            <span className="text-zinc-500">São Paulo - SP</span>
-          </div>
-        </section>
-
-        <section className="w-full bg-white rounded-lg">
-          <img
-            className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-            src="https://www.webmotors.com.br/imagens/prod/348300/MERCEDESBENZ_GLE_53_AMG_3.0_I6_GASOLINA_4MATICPLUS_9GTRONIC_34830015405424367.webp"
-            alt="Carro"
-          />
-
-          <p className="font-bold mt-1 mb-2 px-2">MERCEDESBENZ GLE 53</p>
-
-          <div className="flex flex-col px-2">
-            <span className="text-zinc-500 mb-6">Ano 2025/2025 | 0KM </span>
-            <strong className="text-black font-medium text-xl">
-              R$ 889.900
-            </strong>
-          </div>
-
-          {/* Divisor */}
-          <div className="w-full h-px bg-slate-200 my-2"></div>
-
-          <div className="px-2 pb-2">
-            <span className="text-zinc-500">São Paulo - SP</span>
-          </div>
-        </section>
-
-        <section className="w-full bg-white rounded-lg">
-          <img
-            className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-            src="https://www.webmotors.com.br/imagens/prod/348300/MERCEDESBENZ_GLE_53_AMG_3.0_I6_GASOLINA_4MATICPLUS_9GTRONIC_34830015405424367.webp"
-            alt="Carro"
-          />
-
-          <p className="font-bold mt-1 mb-2 px-2">MERCEDESBENZ GLE 53</p>
-
-          <div className="flex flex-col px-2">
-            <span className="text-zinc-500 mb-6">Ano 2025/2025 | 0KM </span>
-            <strong className="text-black font-medium text-xl">
-              R$ 889.900
-            </strong>
-          </div>
-
-          {/* Divisor */}
-          <div className="w-full h-px bg-slate-200 my-2"></div>
-
-          <div className="px-2 pb-2">
-            <span className="text-zinc-500">São Paulo - SP</span>
-          </div>
-        </section>
-
-        <section className="w-full bg-white rounded-lg">
-          <img
-            className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-            src="https://www.webmotors.com.br/imagens/prod/348300/MERCEDESBENZ_GLE_53_AMG_3.0_I6_GASOLINA_4MATICPLUS_9GTRONIC_34830015405424367.webp"
-            alt="Carro"
-          />
-
-          <p className="font-bold mt-1 mb-2 px-2">MERCEDESBENZ GLE 53</p>
-
-          <div className="flex flex-col px-2">
-            <span className="text-zinc-500 mb-6">Ano 2025/2025 | 0KM </span>
-            <strong className="text-black font-medium text-xl">
-              R$ 889.900
-            </strong>
-          </div>
-
-          {/* Divisor */}
-          <div className="w-full h-px bg-slate-200 my-2"></div>
-
-          <div className="px-2 pb-2">
-            <span className="text-zinc-500">São Paulo - SP</span>
-          </div>
-        </section>
+                <div className="px-2 pb-2">
+                  <span className="text-zinc-500">{car.city}</span>
+                </div>
+              </section>
+            </Link>
+          ))}
       </main>
     </Container>
   );

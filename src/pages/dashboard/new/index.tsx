@@ -9,13 +9,14 @@ import Button from "../../../components/Button";
 import { useContext, useState, type ChangeEvent } from "react";
 import { AuthContext } from "../../../contexts/auth/AuthContext";
 import { v4 as uuidV4 } from "uuid";
-import { storage } from "../../../services/firebaseConnection";
+import { storage, db } from "../../../services/firebaseConnection";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
 
 const schema = z.object({
   name: z.string().nonempty("O campo nome é obrigatorio"),
@@ -48,6 +49,7 @@ const NewCar = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: "onChange",
@@ -55,8 +57,40 @@ const NewCar = () => {
 
   const [carImages, setCarImages] = useState<ImageItemProps[]>([]);
 
-  function onSubmit(data: FormData) {
-    console.log(data);
+  async function onSubmit(data: FormData) {
+    if (carImages.length === 0) {
+      alert("envie alguma imagem deste carro!");
+      return;
+    }
+
+    const carListImages = carImages.map((car) => {
+      return {
+        uid: car.uid,
+        name: car.name,
+        url: car.url,
+      };
+    });
+
+    await addDoc(collection(db, "cars"), {
+      name: data.name,
+      model: data.model,
+      year: data.year,
+      km: data.km,
+      price: data.price,
+      city: data.city,
+      whatsapp: data.whatsapp,
+      description: data.description,
+      created: new Date(),
+      owner: user?.name,
+      uid: user?.uid,
+      images: carListImages,
+    })
+      .then(() => {
+        reset();
+        setCarImages([]);
+        console.log("cadastrado com sucesso!");
+      })
+      .catch((error) => console.log(error));
   }
 
   async function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -110,6 +144,7 @@ const NewCar = () => {
   return (
     <Container>
       <DashboardHeader />
+
       <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-row items-center gap-2">
         <button className="border-2 w-48 rounded-lg flex items-center justify-center cursor-pointer border-gray-600 h-32">
           <div className="cursor-pointer absolute">
@@ -124,6 +159,7 @@ const NewCar = () => {
             />
           </div>
         </button>
+
         {carImages.map((image) => (
           <div
             key={image.name}
