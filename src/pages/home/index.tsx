@@ -3,9 +3,9 @@ import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 
 import Container from "../../components/container";
-import { Link } from "react-router";
+import VehicleCard from "../../components/VehicleCard";
 
-interface CarProps {
+export interface CarProps {
   id: string;
   name: string;
   year: string;
@@ -70,39 +70,7 @@ const Home = () => {
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cars.length > 0 &&
-          cars.map((car) => (
-            <Link to={`/car/${car.id}`} key={car.id}>
-              <section className="w-full bg-white rounded-lg">
-                <img
-                  className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-                  src={car.images[0].url}
-                  alt={car.name}
-                />
-
-                <p className="font-bold mt-1 mb-2 px-2">{car.name}</p>
-
-                <div className="flex flex-col px-2">
-                  <span className="text-zinc-500 mb-6">
-                    Ano {car.year} | {car.km}KM{" "}
-                  </span>
-                  <strong className="text-black font-medium text-xl">
-                    R$
-                    {car.price.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </strong>
-                </div>
-
-                {/* Divisor */}
-                <div className="w-full h-px bg-slate-200 my-2"></div>
-
-                <div className="px-2 pb-2">
-                  <span className="text-zinc-500">{car.city}</span>
-                </div>
-              </section>
-            </Link>
-          ))}
+          cars.map((car) => <VehicleCard key={car.id} car={car} />)}
       </main>
     </Container>
   );
