@@ -19,6 +19,7 @@ import VehicleCard from "../../components/VehicleCard";
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const [cars, setCars] = useState<CarProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     function loadCars() {
@@ -49,6 +50,7 @@ const Dashboard = () => {
             });
           });
           setCars(listCars);
+          setLoading(false);
         })
         .catch();
     }
@@ -78,7 +80,8 @@ const Dashboard = () => {
     <Container>
       <DashboardHeader />
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cars.length > 0 &&
+        {!loading &&
+          cars.length > 0 &&
           cars.map((car) => (
             <div className="relative" key={car.id}>
               <button

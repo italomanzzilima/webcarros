@@ -29,6 +29,7 @@ interface CarImagesProps {
 
 const Home = () => {
   const [cars, setCars] = useState<CarProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     function loadCars() {
@@ -55,6 +56,7 @@ const Home = () => {
             });
           });
           setCars(listCars);
+          setLoading(false);
         })
         .catch();
     }
@@ -63,6 +65,7 @@ const Home = () => {
 
   return (
     <Container>
+      {loading && <p>Loading...</p>}
       <section className="bg-white p-4 rounded-lg w-full max-w-3xl mx-auto flex justify-center items-center gap-2">
         <input
           className="w-full border-2 border-slate-400 rounded-lg h-9 px-3 outline-none"
@@ -79,7 +82,8 @@ const Home = () => {
       </h1>
 
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cars.length > 0 &&
+        {!loading &&
+          cars.length > 0 &&
           cars.map((car) => <VehicleCard key={car.id} car={car} />)}
       </main>
     </Container>
