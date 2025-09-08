@@ -35,12 +35,17 @@ const Dashboard = () => {
             listCars.push({
               id: doc.id,
               name: doc.data().name,
+              model: doc.data().model,
               year: doc.data().year,
               price: doc.data().price,
               km: doc.data().km,
               city: doc.data().city,
+              whatsapp: doc.data().whatsapp,
+              description: doc.data().description,
               images: doc.data().images,
               uid: doc.data().uid,
+              created: doc.data().created,
+              owner: doc.data().owner,
             });
           });
           setCars(listCars);
