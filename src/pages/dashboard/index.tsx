@@ -2,17 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import Container from "../../components/container";
 import DashboardHeader from "../../components/panelHeader";
 import { FiTrash2 } from "react-icons/fi";
-import {
-  collection,
-  query,
-  getDocs,
-  where,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 import { db, storage } from "../../services/firebaseConnection";
 import { ref, deleteObject } from "firebase/storage";
-import type { CarProps } from "../home";
+import { fetchAllCars, type CarProps } from "../../services/carService";
 import { AuthContext } from "../../contexts/auth/AuthContext";
 import VehicleCard from "../../components/VehicleCard";
 
@@ -21,38 +14,21 @@ const Dashboard = () => {
   const [cars, setCars] = useState<CarProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    function loadCars() {
-      if (!user?.uid) {
-        return;
-      }
-      const carsRef = collection(db, "cars");
-      const queryRef = query(carsRef, where("uid", "==", user.uid));
+  async function loadCars() {
+    setLoading(true);
+    try {
+      const listCars = await fetchAllCars();
+      setCars(listCars);
+    } catch (err) {
+      console.error("Error loading cars:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-      getDocs(queryRef)
-        .then((snapshot) => {
-          const listCars = [] as CarProps[];
-          snapshot.forEach((doc) => {
-            listCars.push({
-              id: doc.id,
-              name: doc.data().name,
-              model: doc.data().model,
-              year: doc.data().year,
-              price: doc.data().price,
-              km: doc.data().km,
-              city: doc.data().city,
-              whatsapp: doc.data().whatsapp,
-              description: doc.data().description,
-              images: doc.data().images,
-              uid: doc.data().uid,
-              created: doc.data().created,
-              owner: doc.data().owner,
-            });
-          });
-          setCars(listCars);
-          setLoading(false);
-        })
-        .catch();
+  useEffect(() => {
+    if (!user?.uid) {
+      return;
     }
 
     loadCars();

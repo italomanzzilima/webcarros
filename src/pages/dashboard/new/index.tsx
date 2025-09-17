@@ -17,6 +17,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().nonempty("O campo nome é obrigatorio"),
@@ -59,7 +60,7 @@ const NewCar = () => {
 
   async function onSubmit(data: FormData) {
     if (carImages.length === 0) {
-      alert("envie alguma imagem deste carro!");
+      toast.error("envie alguma imagem deste carro!");
       return;
     }
 
@@ -72,8 +73,8 @@ const NewCar = () => {
     });
 
     await addDoc(collection(db, "cars"), {
-      name: data.name,
-      model: data.model,
+      name: data.name.toUpperCase(),
+      model: data.model.toUpperCase(),
       year: data.year,
       km: data.km,
       price: data.price,
@@ -88,7 +89,7 @@ const NewCar = () => {
       .then(() => {
         reset();
         setCarImages([]);
-        console.log("cadastrado com sucesso!");
+        toast.success("cadastrado com sucesso!");
       })
       .catch((error) => console.log(error));
   }
@@ -100,7 +101,7 @@ const NewCar = () => {
       if (image.type === "image/jpeg" || image.type === "image/png") {
         await handleUpload(image);
       } else {
-        alert("envie uma imagem jpeg ou png");
+        toast.error("envie uma imagem jpeg ou png");
       }
     }
   }
@@ -124,6 +125,7 @@ const NewCar = () => {
             url: downloadUrl,
           };
           setCarImages((images) => [...images, imageItem]);
+          toast.success("Imagem cadastrada com sucesso!");
         });
       })
       .catch((error) => console.log(error));
@@ -135,10 +137,10 @@ const NewCar = () => {
     try {
       await deleteObject(imageRef);
       setCarImages(carImages.filter((car) => car.url !== image.url));
+      toast.success("Imagem deletada com sucesso!");
     } catch (error) {
       console.log(error);
     }
-    console.log(imagePath);
   }
 
   return (

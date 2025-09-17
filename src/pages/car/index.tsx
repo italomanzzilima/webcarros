@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import Container from "../../components/container";
 import { FaWhatsapp } from "react-icons/fa";
-import type { CarProps } from "../home";
+import type { CarProps } from "../../services/carService";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { Swiper, SwiperSlide } from "swiper/react";

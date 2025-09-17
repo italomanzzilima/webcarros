@@ -14,6 +14,7 @@ import {
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/auth/AuthContext";
 import Button from "../../components/Button";
+import toast from "react-hot-toast";
 
 // zod schema for form validation
 const schema = z.object({
@@ -59,12 +60,12 @@ const Register = () => {
           uid: user.user.uid,
         });
 
-        console.log("cadastrado com sucesso");
+        toast.success("cadastrado com sucesso");
 
         navigate("/dashboard", { replace: true });
       })
       .catch((error) => {
-        console.log("erro ao cadastrar usuario!");
+        toast.error("erro ao cadastrar usuario!");
         console.log(error);
       });
   }
